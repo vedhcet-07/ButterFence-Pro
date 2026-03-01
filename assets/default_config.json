@@ -1,0 +1,31 @@
+{
+  "_comment": "This is the reference copy of ButterFence default config. Actual config is at .butterfence/config.json",
+  "version": 1,
+  "categories": {
+    "destructive_shell": {
+      "enabled": true,
+      "severity": "critical",
+      "action": "block"
+    },
+    "secret_access": {
+      "enabled": true,
+      "severity": "critical",
+      "action": "block"
+    },
+    "secret_exfil": {
+      "enabled": true,
+      "severity": "high",
+      "action": "block"
+    },
+    "risky_git": {
+      "enabled": true,
+      "severity": "high",
+      "action": "block"
+    },
+    "network_exfil": {
+      "enabled": true,
+      "severity": "high",
+      "action": "block"
+    }
+  }
+}

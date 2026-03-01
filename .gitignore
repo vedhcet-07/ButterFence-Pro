@@ -1,0 +1,41 @@
+/.claude
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+.pytest_cache/
+.butterfence/
+*.jsonl
+.env
+.env.*
+*.pem
+_fix_*.py
+_gen_*.py
+_ords_data.txt
+demo/vulnerable-repo/report.html
+
++# Virtual environment
++.venv/
++venv/
++env/
++
++# Generated reports
++report.html
++*.sarif
++badge.svg
++
++# IDE
++.vscode/
++.idea/
++*.swp
++
++# OS files
++.DS_Store
++Thumbs.db
++
++# Distribution
++*.egg-info/

@@ -1,0 +1,57 @@
+---
+# ButterFence Rule Pack: Docker Security
+# Detects insecure Docker configurations including privileged containers, host mounts, and capability abuse.
+
+name: docker
+version: "1.0.0"
+author: ButterFence
+description: "Docker security patterns for container escape, privileged mode, host mounts, and dangerous docker commands"
+
+categories:
+  container_escape:
+    enabled: true
+    severity: critical
+    action: block
+    patterns:
+      # Privileged mode
+      - "(?i)--privileged"
+      - "(?i)(privileged\\s*:\\s*true)"
+      # Root filesystem mount
+      - "(?i)-v\\s+/:/host"
+      - "(?i)-v\\s+/:/[a-zA-Z]"
+      # PID namespace sharing
+      - "(?i)--pid\\s*=\\s*host"
+      - "(?i)(pid\\s*:\\s*['\"]?host['\"]?)"
+      # Host network mode
+      - "(?i)--net\\s*=\\s*host"
+      - "(?i)--network\\s*=\\s*host"
+      - "(?i)(network_mode\\s*:\\s*['\"]?host['\"]?)"
+      # Docker socket mount
+      - "(?i)docker\\.sock"
+      - "(?i)-v\\s+/var/run/docker\\.sock"
+      # Dangerous capabilities
+      - "(?i)--cap-add\\s*=\\s*SYS_ADMIN"
+      - "(?i)--cap-add\\s*=\\s*(ALL|SYS_PTRACE|NET_ADMIN|NET_RAW)"
+      - "(?i)(cap_add\\s*:.*\\b(ALL|SYS_ADMIN|SYS_PTRACE|NET_ADMIN)\\b)"
+    safe_list: []
+
+  docker_dangerous:
+    enabled: true
+    severity: high
+    action: block
+    patterns:
+      # Exec into container with privileged mode
+      - "(?i)docker\\s+exec.*--privileged"
+      # Copy sensitive host files into/from container
+      - "(?i)docker\\s+cp.*:/etc/"
+      - "(?i)docker\\s+cp.*:/root/"
+      - "(?i)docker\\s+cp.*/etc/shadow"
+      - "(?i)docker\\s+cp.*/etc/passwd"
+      # Docker save piped to external command
+      - "(?i)docker\\s+save.*\\|"
+      - "(?i)docker\\s+export.*\\|"
+      # Docker build from remote URL
+      - "(?i)docker\\s+build\\s+https?://"
+      # IPC host sharing
+      - "(?i)docker\\s+run.*--ipc\\s*=\\s*host"
+    safe_list: []

@@ -1,0 +1,47 @@
+---
+# ButterFence Rule Pack: AWS Security
+# Detects AWS credential exposure and dangerous service operations.
+
+name: aws
+version: "1.0.0"
+author: ButterFence
+description: "AWS credential patterns and dangerous service operations for S3, IAM, EC2, and RDS"
+
+categories:
+  aws_credentials:
+    enabled: true
+    severity: critical
+    action: block
+    patterns:
+      # AWS Access Key ID (starts with AKIA, ABIA, ACCA, ASIA)
+      - "(?i)(A[BCS]IA[0-9A-Z]{16})"
+      # AWS secret access key
+      - "(?i)(aws_secret_access_key|aws_secret_key|aws_secret)\\s*[:=]\\s*['\"]?[A-Za-z0-9/+=]{40}['\"]?"
+      # AWS session token
+      - "(?i)(AWS_SESSION_TOKEN|aws_session_token|x-amz-security-token)\\s*[:=]\\s*['\"]?[A-Za-z0-9/+=]{100,}['\"]?"
+      # S3 credentials path
+      - "(?i)s3://.*credentials"
+      # Exported AWS environment variables
+      - "(?i)\\bexport\\s+(AWS_ACCESS_KEY_ID|AWS_SECRET_ACCESS_KEY|AWS_SESSION_TOKEN)\\s*="
+      # AWS credentials file access
+      - "(?i)(cat|less|more|head|tail|cp|scp)\\s+.*\\.aws/(credentials|config)"
+    safe_list: []
+
+  aws_dangerous_operations:
+    enabled: true
+    severity: high
+    action: block
+    patterns:
+      # Destructive S3 operations
+      - "(?i)aws\\s+s3\\s+(rm|rb)\\s+.*--recursive"
+      - "(?i)aws\\s+s3\\s+rb\\s+s3://"
+      # EC2 terminate instances
+      - "(?i)aws\\s+ec2\\s+terminate-instances"
+      - "(?i)aws\\s+ec2\\s+authorize-security-group-ingress.*0\\.0\\.0\\.0/0"
+      # IAM destructive operations
+      - "(?i)aws\\s+iam\\s+delete-(user|role|group|policy)"
+      - "(?i)aws\\s+iam\\s+(create-access-key|attach-(user|group|role)-policy)"
+      # RDS destructive operations
+      - "(?i)aws\\s+rds\\s+delete-db-(instance|cluster|snapshot)"
+      - "(?i)aws\\s+rds\\s+modify-db-instance.*--publicly-accessible"
+    safe_list: []

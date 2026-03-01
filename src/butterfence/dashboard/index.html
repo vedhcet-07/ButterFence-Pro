@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ButterFence Pro — Security Dashboard</title>
+    <meta name="description" content="ButterFence Pro security dashboard — monitor threats, run red team assessments, scan supply chains, and manage detection rules.">
+    <link rel="stylesheet" href="/dashboard/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <span class="brand-icon">🛡️</span>
+                <span class="brand-text">ButterFence <span class="brand-pro">Pro</span></span>
+            </div>
+            <nav class="sidebar-nav" id="nav">
+                <a href="#" class="nav-item active" data-page="overview">
+                    <span class="nav-icon">📊</span>
+                    <span>Overview</span>
+                </a>
+                <a href="#" class="nav-item" data-page="threats">
+                    <span class="nav-icon">🚨</span>
+                    <span>Threats</span>
+                </a>
+                <a href="#" class="nav-item" data-page="redteam">
+                    <span class="nav-icon">🔴</span>
+                    <span>Red Team</span>
+                </a>
+                <a href="#" class="nav-item" data-page="supply-chain">
+                    <span class="nav-icon">📦</span>
+                    <span>Supply Chain</span>
+                </a>
+                <a href="#" class="nav-item" data-page="audit-log">
+                    <span class="nav-icon">📜</span>
+                    <span>Audit Log</span>
+                </a>
+                <a href="#" class="nav-item" data-page="settings">
+                    <span class="nav-icon">⚙️</span>
+                    <span>Settings</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <span class="status-dot"></span>
+                <span class="status-text">API Connected</span>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="main-content" id="main-content">
+            <!-- Header -->
+            <header class="page-header">
+                <h1 class="page-title" id="page-title">Overview</h1>
+                <div class="header-actions">
+                    <span class="timestamp" id="last-updated"></span>
+                    <button class="btn btn-ghost" onclick="location.reload()">↻ Refresh</button>
+                </div>
+            </header>
+
+            <!-- Page container -->
+            <div class="page-container" id="page-container">
+                <!-- Dynamic content injected here -->
+            </div>
+        </main>
+    </div>
+
+    <script src="/dashboard/app.js"></script>
+</body>
+</html>

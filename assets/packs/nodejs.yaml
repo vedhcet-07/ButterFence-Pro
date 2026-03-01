@@ -1,0 +1,47 @@
+---
+# ButterFence Rule Pack: Node.js Security
+# Detects dangerous Node.js patterns including code execution, prototype pollution, and unsafe modules.
+
+name: nodejs
+version: "1.0.0"
+author: ButterFence
+description: "Node.js dangerous patterns including eval, child_process, prototype pollution, and unsafe module usage"
+
+categories:
+  nodejs_dangerous:
+    enabled: true
+    severity: critical
+    action: block
+    patterns:
+      # eval with dynamic input
+      - "(?i)\\beval\\s*\\("
+      # Function constructor
+      - "(?i)\\bnew\\s+Function\\s*\\("
+      - "(?i)\\bFunction\\s*\\(\\s*['\"]"
+      # child_process module
+      - "(?i)child_process\\.(exec|execSync|spawn|spawnSync|execFile)\\s*\\("
+      - "(?i)require\\s*\\(\\s*['\"]child_process['\"]\\s*\\)"
+      # vm module sandbox escape
+      - "(?i)vm\\.runInNewContext\\s*\\("
+      - "(?i)vm\\.(runInThisContext|createScript|compileFunction)\\s*\\("
+      # Dangerous require with dynamic input
+      - "(?i)require\\s*\\(\\s*(req\\.|request\\.|params\\.|query\\.|body\\.)"
+    safe_list: []
+
+  prototype_pollution:
+    enabled: true
+    severity: high
+    action: block
+    patterns:
+      # Direct __proto__ access
+      - "(?i)__proto__"
+      # Constructor prototype manipulation
+      - "(?i)constructor\\.prototype"
+      - "(?i)\\bconstructor\\s*\\[\\s*['\"]prototype['\"]\\s*\\]"
+      # Object.assign with __proto__
+      - "(?i)Object\\.assign\\s*\\(.*__proto__"
+      # Bracket notation prototype access
+      - "(?i)\\[\\s*['\"]__proto__['\"]\\s*\\]"
+      # Deep merge / extend with untrusted input
+      - "(?i)(merge|extend|defaults|assign)\\s*\\(.*\\b(req\\.|request\\.|body\\.|params\\.)"
+    safe_list: []

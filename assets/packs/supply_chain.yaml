@@ -1,0 +1,54 @@
+---
+# ButterFence Rule Pack: Supply Chain Security
+# Detects supply chain attack vectors including dependency confusion, typosquatting, and script injection.
+
+name: supply_chain
+version: "1.0.0"
+author: ButterFence
+description: "Supply chain attack patterns for dependency confusion, insecure registries, pipe-to-shell installs, and script injection"
+
+categories:
+  dependency_confusion:
+    enabled: true
+    severity: critical
+    action: block
+    patterns:
+      # pip install from insecure HTTP index
+      - "(?i)pip\\s+install.*--index-url\\s+http://"
+      # pip install with extra index URL (potential confusion)
+      - "(?i)pip\\s+install.*--extra-index-url"
+      # npm with HTTP registry
+      - "(?i)npm.*(--registry|registry\\s*[:=])\\s*http://"
+      - "(?i)npm_config_registry\\s*=\\s*http://"
+      # Yarn insecure registry
+      - "(?i)yarn.*(--registry|registry\\s*[:=])\\s*http://"
+      # Dependency confusion via publishConfig
+      - "(?i)(\"publishConfig\"\\s*:\\s*\\{\\s*\"registry\"\\s*:\\s*\"https?://[^\"]*(?!registry\\.npmjs\\.org)[^\"]+\")"
+      # Internal package install with force/pre flags
+      - "(?i)(pip\\s+install|npm\\s+(install|i))\\s+--(pre|force)\\s+[a-z]+-[a-z]+-internal"
+      # Git dependency from unknown sources
+      - "(?i)(\"git\\+(https?|ssh)://(?!github\\.com|gitlab\\.com|bitbucket\\.org)[^\"]+\")"
+    safe_list: []
+
+  script_injection:
+    enabled: true
+    severity: critical
+    action: block
+    patterns:
+      # Pipe-to-shell: curl | sh/bash
+      - "(?i)curl\\s+[^|]*\\|\\s*(ba)?sh"
+      - "(?i)curl\\s+[^|]*\\|\\s*sudo\\s+(ba)?sh"
+      # Pipe-to-shell: wget | sh/bash
+      - "(?i)wget\\s+[^|]*\\|\\s*(ba)?sh"
+      - "(?i)wget\\s+[^|]*\\|\\s*sudo\\s+(ba)?sh"
+      # Pipe to interpreters: curl/wget | python/perl/ruby/node
+      - "(?i)curl\\s+[^|]*\\|\\s*python"
+      - "(?i)wget\\s+[^|]*\\|\\s*python"
+      - "(?i)(curl|wget)\\s+[^|]+\\|\\s*(perl|ruby|node)\\b"
+      # npm lifecycle event abuse
+      - "(?i)npm_lifecycle_event"
+      # Postinstall script abuse
+      - "(?i)(\"(preinstall|postinstall|preuninstall)\"\\s*:\\s*\"\\s*(curl|wget|nc|bash|sh|python|node\\s+-e))"
+      # Known typosquatting patterns
+      - "(?i)(require|import)\\s*\\(?\\s*['\"]\\s*(coffe-script|lodsah|crypt0-js|electorn|bable-cli|cross-env\\.|event-stream)\\s*['\"]"
+    safe_list: []

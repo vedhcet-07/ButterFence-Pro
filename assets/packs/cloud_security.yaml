@@ -1,0 +1,68 @@
+---
+# ButterFence Rule Pack: Multi-Cloud Security
+# Detects Azure, GCP, and multi-cloud credential exposure and dangerous operations.
+
+name: cloud_security
+version: "1.0.0"
+author: ButterFence
+description: "Multi-cloud security patterns for Azure, GCP, and cross-provider credential detection and service hardening"
+
+categories:
+  azure_security:
+    enabled: true
+    severity: critical
+    action: block
+    patterns:
+      # Azure client secret / service principal credentials
+      - "(?i)AZURE_CLIENT_SECRET\\s*[:=]\\s*['\"]?[A-Za-z0-9~._-]{34,}['\"]?"
+      - "(?i)(client_secret|tenant_password)\\s*[:=]\\s*['\"]?[A-Za-z0-9~._-]{34,}['\"]?"
+      # Azure AD app credential operations
+      - "(?i)az\\s+ad\\s+app\\s+credential\\s+(reset|create|delete)"
+      - "(?i)az\\s+ad\\s+sp\\s+create-for-rbac"
+      # Azure keyvault secret access
+      - "(?i)az\\s+keyvault\\s+secret\\s+(show|set|download|list)"
+      # Azure connection strings
+      - "(?i)DefaultEndpointsProtocol=https?;AccountName=[^;]+;AccountKey=[A-Za-z0-9+/=]{44,}"
+      # Azure storage account keys
+      - "(?i)AccountKey\\s*=\\s*[A-Za-z0-9+/=]{44,88}"
+      # Azure CLI credential file access
+      - "(?i)(cat|less|cp)\\s+.*\\.azure/(accessTokens\\.json|azureProfile\\.json|msal_token_cache)"
+    safe_list: []
+
+  gcp_security:
+    enabled: true
+    severity: critical
+    action: block
+    patterns:
+      # GCP application credentials env var
+      - "(?i)GOOGLE_APPLICATION_CREDENTIALS\\s*[:=]\\s*['\"]?[^\\s'\"]+['\"]?"
+      # GCP auth print identity/access token
+      - "(?i)gcloud\\s+auth\\s+print-(identity-token|access-token)"
+      # gsutil credential copy
+      - "(?i)gsutil\\s+cp.*credentials"
+      - "(?i)gsutil\\s+cp.*service[_-]?account[_-]?key"
+      # GCP service account key files
+      - "(?i)(cat|less|cp)\\s+.*application_default_credentials\\.json"
+      - "(?i)(cat|less|cp)\\s+.*service[_-]?account[_-]?key\\.json"
+      # GCP API keys
+      - "(?i)(AIza[0-9A-Za-z_-]{35})"
+      # GCP metadata server
+      - "(?i)metadata\\.google\\.internal/computeMetadata"
+    safe_list: []
+
+  multi_cloud_credentials:
+    enabled: true
+    severity: high
+    action: block
+    patterns:
+      # Generic cloud provider token patterns
+      - "(?i)(cloud[_-]?provider[_-]?token|cloud[_-]?api[_-]?key)\\s*[:=]\\s*['\"][^'\"]{16,}['\"]"
+      - "(?i)(cloud[_-]?provider[_-]?secret|cloud[_-]?secret[_-]?key)\\s*[:=]\\s*['\"][^'\"]{16,}['\"]"
+      # Generic auth tokens from cloud providers
+      - "(?i)(bearer|token|authorization)\\s*[:=]\\s*['\"]?(eyJ[A-Za-z0-9_-]{10,}\\.eyJ[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]+)['\"]?"
+      # Cross-cloud credential exfiltration
+      - "(?i)(curl|wget|http).*\\b(credentials|secrets|tokens)\\b.*\\.(amazonaws|azure|googleapis)\\.com"
+      # Terraform state with secrets
+      - "(?i)(cat|less|cp|curl)\\s+.*terraform\\.tfstate"
+      - "(?i)terraform\\s+state\\s+pull"
+    safe_list: []

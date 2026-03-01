@@ -1,0 +1,32 @@
+{
+  "dangerous_bash": {
+    "tool_name": "Bash",
+    "tool_input": {"command": "rm -rf / --no-preserve-root"},
+    "hook_event_name": "PreToolUse"
+  },
+  "safe_bash": {
+    "tool_name": "Bash",
+    "tool_input": {"command": "ls -la"},
+    "hook_event_name": "PreToolUse"
+  },
+  "secret_read": {
+    "tool_name": "Read",
+    "tool_input": {"file_path": ".env"},
+    "hook_event_name": "PreToolUse"
+  },
+  "safe_read": {
+    "tool_name": "Read",
+    "tool_input": {"file_path": "README.md"},
+    "hook_event_name": "PreToolUse"
+  },
+  "secret_write": {
+    "tool_name": "Write",
+    "tool_input": {"file_path": "config.js", "content": "const key = 'AKIAIOSFODNN7EXAMPLE';"},
+    "hook_event_name": "PreToolUse"
+  },
+  "force_push": {
+    "tool_name": "Bash",
+    "tool_input": {"command": "git push --force origin main"},
+    "hook_event_name": "PreToolUse"
+  }
+}

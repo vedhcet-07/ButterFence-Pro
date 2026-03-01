@@ -1,0 +1,65 @@
+---
+# ButterFence Rule Pack: OWASP Top 10
+# Detects common web application vulnerability patterns from the OWASP Top 10.
+
+name: owasp
+version: "1.0.0"
+author: ButterFence
+description: "OWASP Top 10 vulnerability patterns including XSS, command injection, path traversal, and insecure deserialization"
+
+categories:
+  xss_injection:
+    enabled: true
+    severity: critical
+    action: block
+    patterns:
+      - "(?i)<script[^>]*>"
+      - "(?i)javascript\\s*:"
+      - "(?i)onerror\\s*="
+      - "(?i)onload\\s*="
+      - "(?i)document\\.cookie"
+      - "(?i)(onclick|onmouseover|onfocus|onblur|onsubmit|onchange)\\s*=\\s*['\"]"
+      - "(?i)innerHTML\\s*="
+      - "(?i)outerHTML\\s*="
+    safe_list: []
+
+  command_injection:
+    enabled: true
+    severity: critical
+    action: block
+    patterns:
+      - "(?i)os\\.system\\s*\\("
+      - "(?i)subprocess.*shell\\s*=\\s*True"
+      - "(?i)child_process\\.exec\\s*\\("
+      - "(?i)system\\("
+      - "(?i)os\\.popen\\s*\\("
+      - "(?i)Runtime\\.exec\\s*\\("
+      - "(?i)(;|\\||&&|\\$\\()\\s*(cat|ls|rm|wget|curl|nc|bash|sh|python|perl|ruby)\\b"
+    safe_list: []
+
+  path_traversal:
+    enabled: true
+    severity: high
+    action: block
+    patterns:
+      - "(?i)\\.\\./\\.\\."
+      - "(?i)/etc/passwd"
+      - "(?i)/etc/shadow"
+      - "(?i)\\.\\.[\\\\/]\\.\\.[\\\\/]"
+      - "(?i)%2e%2e[/\\\\]"
+      - "(?i)\\.\\./\\.\\./\\.\\./\\.\\."
+    safe_list: []
+
+  insecure_deserialization:
+    enabled: true
+    severity: critical
+    action: block
+    patterns:
+      - "(?i)pickle\\.loads\\s*\\("
+      - "(?i)yaml\\.load\\(.*Loader"
+      - "(?i)unserialize\\("
+      - "(?i)yaml\\.unsafe_load\\s*\\("
+      - "(?i)marshal\\.loads\\s*\\("
+      - "(?i)ObjectInputStream\\s*\\("
+      - "(?i)readObject\\s*\\("
+    safe_list: []

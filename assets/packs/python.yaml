@@ -1,0 +1,48 @@
+---
+# ButterFence Rule Pack: Python Security
+# Detects dangerous Python patterns including unsafe deserialization, code execution, and subprocess abuse.
+
+name: python
+version: "1.0.0"
+author: ButterFence
+description: "Python security patterns for code execution, unsafe deserialization, subprocess abuse, and dangerous builtins"
+
+categories:
+  python_code_execution:
+    enabled: true
+    severity: critical
+    action: block
+    patterns:
+      # Built-in code execution functions
+      - "(?i)\\beval\\s*\\("
+      - "(?i)\\bexec\\s*\\("
+      - "(?i)\\bcompile\\s*\\("
+      # OS-level command execution
+      - "(?i)os\\.system\\s*\\("
+      - "(?i)os\\.popen\\s*\\("
+      # subprocess with shell=True
+      - "(?i)subprocess\\.(call|run|Popen|check_output|check_call)\\s*\\(.*shell\\s*=\\s*True"
+      # Dynamic import
+      - "(?i)__import__\\s*\\("
+      - "(?i)importlib\\.import_module\\s*\\("
+      # ctypes library loading
+      - "(?i)ctypes\\.(cdll|windll|CDLL|WinDLL)\\.LoadLibrary\\s*\\("
+    safe_list: []
+
+  python_deserialization:
+    enabled: true
+    severity: critical
+    action: block
+    patterns:
+      # pickle deserialization
+      - "(?i)pickle\\.loads?\\s*\\("
+      - "(?i)pickle\\.Unpickler\\s*\\("
+      - "(?i)_pickle\\.loads?\\s*\\("
+      # yaml unsafe load
+      - "(?i)yaml\\.unsafe_load\\s*\\("
+      - "(?i)yaml\\.load\\s*\\((?!.*Loader\\s*=\\s*(yaml\\.)?SafeLoader)"
+      # marshal deserialization
+      - "(?i)marshal\\.loads?\\s*\\("
+      # shelve (uses pickle internally)
+      - "(?i)shelve\\.open\\s*\\("
+    safe_list: []
