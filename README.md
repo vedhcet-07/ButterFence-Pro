@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/ayush585/ButterFence/main/assets/logo.png" alt="ButterFence Logo" width="200">
+  <img src="src/butterfence/generated-image.png" alt="ButterFence Logo" width="200">
 </p>
 
 <h1 align="center">ButterFence Pro</h1>
