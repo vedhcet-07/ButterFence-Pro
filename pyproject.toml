@@ -114,3 +114,10 @@ omit = ["*/tests/*", "*/__pycache__/*", "*/site-packages/*"]
 precision = 2
 show_missing = true
 skip_covered = false
+
+[tool.bandit]
+exclude_dirs = ["tests", "build", "dist", ".venv", "venv"]
+skips = ["B101", "B601"]  # B101: assert_used, B601: paramiko_calls
+
+[tool.bandit.assert_used]
+skips = ["*/test_*.py", "*/*_test.py"]

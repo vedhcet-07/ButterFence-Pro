@@ -18,24 +18,49 @@ _gen_*.py
 _ords_data.txt
 demo/vulnerable-repo/report.html
 
-+# Virtual environment
-+.venv/
-+venv/
-+env/
-+
-+# Generated reports
-+report.html
-+*.sarif
-+badge.svg
-+
-+# IDE
-+.vscode/
-+.idea/
-+*.swp
-+
-+# OS files
-+.DS_Store
-+Thumbs.db
-+
-+# Distribution
-+*.egg-info/
+# Virtual environment
+.venv/
+venv/
+env/
+ENV/
+
+# Generated reports
+report.html
+*.sarif
+badge.svg
+coverage.xml
+htmlcov/
+.coverage
+*.cover
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Distribution
+*.egg-info/
+
+# Linting and type checking
+.mypy_cache/
+.ruff_cache/
+.pylint.d/
+
+# Testing
+.tox/
+.nox/
+
+# Build tools
+*.so
+*.dylib
+*.dll
+
+# Logs
+*.log
+logs/
