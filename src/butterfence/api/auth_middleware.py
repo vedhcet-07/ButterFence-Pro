@@ -23,13 +23,25 @@ api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 # Environment variable for the API key
 API_KEY_ENV = "BUTTERFENCE_API_KEY"
 
-# Default key for development (should be overridden in production)
-DEFAULT_DEV_KEY = "bf-dev-key-change-me"
-
 
 def _get_valid_api_key() -> str:
-    """Get the configured API key from environment or default."""
-    return os.environ.get(API_KEY_ENV, DEFAULT_DEV_KEY)
+    """Get the configured API key from environment.
+    
+    Raises:
+        ValueError: If BUTTERFENCE_API_KEY environment variable is not set.
+        
+    Security Note:
+        Never use a hardcoded default API key. Always set BUTTERFENCE_API_KEY
+        to a secure random value before deploying.
+    """
+    api_key = os.environ.get(API_KEY_ENV)
+    if not api_key:
+        raise ValueError(
+            f"Missing required {API_KEY_ENV} environment variable. "
+            f"Set it to a secure random key (e.g., generate with: "
+            f"python -c 'import secrets; print(secrets.token_urlsafe(32))')"
+        )
+    return api_key
 
 
 def _verify_key(provided: str, expected: str) -> bool:
