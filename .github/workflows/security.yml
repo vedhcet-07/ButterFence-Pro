@@ -1,0 +1,47 @@
+name: Security
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly on Sunday at midnight
+
+jobs:
+  security:
+    name: Security Scans
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e '.[dev]'
+          pip install bandit safety
+      
+      - name: Run bandit security linter
+        run: bandit -r src/butterfence/ -f json -o bandit-report.json
+        continue-on-error: true
+      
+      - name: Upload bandit results
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-report
+          path: bandit-report.json
+      
+      - name: Check dependencies for vulnerabilities
+        run: safety check --json
+        continue-on-error: true
+      
+      - name: Run dependency review
+        uses: actions/dependency-review-action@v4
+        if: github.event_name == 'pull_request'

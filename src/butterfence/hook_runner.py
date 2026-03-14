@@ -73,8 +73,11 @@ def _log_event(project_root: Path, payload: HookPayload, result: MatchResult) ->
             )
         finally:
             conn.close()
-    except Exception:
-        pass  # SQLite logging is best-effort
+    except Exception as e:
+        # SQLite logging is best-effort, but we should track failures
+        # Don't raise to avoid breaking the main workflow
+        import logging
+        logging.getLogger(__name__).debug("Failed to log threat to database: %s", e)
 
 
 def _summarize_input(tool_input: dict) -> str:
